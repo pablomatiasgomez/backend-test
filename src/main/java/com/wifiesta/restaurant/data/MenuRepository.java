@@ -1,5 +1,6 @@
 package com.wifiesta.restaurant.data;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,7 +56,11 @@ public class MenuRepository {
     // Not syncronized, callers should do that.
     private List<Menu> readAllFromFile() {
         try {
-            InputStream stream = new FileInputStream(this.filePath);
+            File file = new File(this.filePath);
+            if (file.createNewFile()) {
+                return new ArrayList<>();
+            }
+            InputStream stream = new FileInputStream(file);
             return this.objectMapper.readValue(stream, new TypeReference<List<Menu>>() {
             });
         } catch (IOException e) {
@@ -66,7 +71,9 @@ public class MenuRepository {
     // Not syncronized, callers should do that.
     private void saveToFile(List<Menu> menus) {
         try {
-            OutputStream stream = new FileOutputStream(this.filePath);
+            File file = new File(this.filePath);
+            file.createNewFile();
+            OutputStream stream = new FileOutputStream(file);
             this.objectMapper.writeValue(stream, menus);
         } catch (IOException e) {
             throw new RuntimeException(e);

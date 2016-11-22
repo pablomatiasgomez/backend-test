@@ -58,8 +58,10 @@ public class MenuFilter {
     // el menu debe contener dentro de sus fechas/horas habilitadas, al filtro recibido, es decir:
     // el from del menu siempre debe ser menor (o igual) al from del filtro, y
     // el to del menu siempre debe ser mayor (o igual) al to del filtro.
-    // Esto significa que el menú está "contenido" en el filtro.
+    // Esto significa que el filtro está "contenido" en el menu.
     // De esta manera solo se devuelven menus que estén habilitados en todo el rango pedido.
+    // Esto podria hacerse de otra manera, considerando el to respecto el from para hacer otro tipo de compraracion.. todo depende
+    // del requerimiento.
 
     private boolean appliesWeekTimes(Menu menu) {
         if (menu.getValidWeekTimes() != null && !menu.getValidWeekTimes().isEmpty()) {
@@ -67,10 +69,10 @@ public class MenuFilter {
                 if (this.validDayOfWeek != null && !this.validDayOfWeek.equals(validWeekTime.getDayOfWeek())) {
                     return false;
                 }
-                if (this.fromTime != null && this.fromTime.isAfter(validWeekTime.getFromTime())) {
+                if (this.fromTime != null && validWeekTime.getFromTime().isAfter(this.fromTime)) {
                     return false;
                 }
-                if (this.toTime != null && this.toTime.isBefore(validWeekTime.getToTime())) {
+                if (this.toTime != null && validWeekTime.getToTime().isBefore(this.toTime)) {
                     return false;
                 }
                 return true;
@@ -81,12 +83,12 @@ public class MenuFilter {
 
     private boolean appliesDates(Menu menu) {
         if (menu.getValidFrom() != null) {
-            if (this.validFrom != null && this.validFrom.isAfter(menu.getValidFrom())) {
+            if (this.validFrom != null && menu.getValidFrom().isAfter(this.validFrom)) {
                 return false;
             }
         }
         if (menu.getValidTo() != null) {
-            if (this.validTo != null && this.validTo.isBefore(menu.getValidTo())) {
+            if (this.validTo != null && menu.getValidTo().isBefore(this.validTo)) {
                 return false;
             }
         }

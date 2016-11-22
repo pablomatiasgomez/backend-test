@@ -104,10 +104,17 @@ public class MenuServiceTest {
         String id = "222";
 
         Menu menu = new Menu();
+        menu = new Menu();
         menu.setId(id);
-        menu.setName("Almuerzo 2");
-
+        menu.setName("Cena 2");
+        menu.setDescription("cena numero 2");
+        menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));
+        menu.setPrice(new Price("USD", new BigDecimal(100)));
+        menu.setRanking(2);
+        menu.setValidFrom(LocalDateTime.of(2016, 3, 1, 0, 0));
+        menu.setValidTo(LocalDateTime.of(2016, 4, 1, 0, 0));
         this.menuService.saveMenu(menu);
+
         Assert.assertEquals(menu, this.menuService.getById(id));
     }
 
@@ -145,8 +152,8 @@ public class MenuServiceTest {
 
         MenuFilter menuFilter = new MenuFilter(validFrom, validTo);
         this.menuService.getFiltered(menuFilter).forEach(menu -> {
-            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidFrom(), validFrom));
-            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidTo(), validTo));
+            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidFrom(), validFrom));
+            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidTo(), validTo));
         });
     }
 
@@ -158,8 +165,8 @@ public class MenuServiceTest {
 
         MenuFilter menuFilter = new MenuFilter(validFrom, validTo);
         this.menuService.getFiltered(menuFilter).forEach(menu -> {
-            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidFrom(), validFrom));
-            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidTo(), validTo));
+            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidFrom(), validFrom));
+            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidTo(), validTo));
         });
     }
 
@@ -171,9 +178,51 @@ public class MenuServiceTest {
 
         MenuFilter menuFilter = new MenuFilter(validFrom, validTo);
         this.menuService.getFiltered(menuFilter).forEach(menu -> {
-            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidFrom(), validFrom));
-            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidTo(), validTo));
+            Assert.assertTrue(this.dateTimeIsBeforeOrEquals(menu.getValidFrom(), validFrom));
+            Assert.assertTrue(this.dateTimeIsAfterOrEquals(menu.getValidTo(), validTo));
         });
+    }
+
+    @Test
+    public void testFilteredWithValidDatesIsContained() {
+        Menu menu;
+        menu = new Menu();
+        menu.setId("contained");
+        menu.setName("Cena 1");
+        menu.setDescription("cena numero 1");
+        menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));
+        menu.setPrice(new Price("ARS", new BigDecimal(14)));
+        menu.setRanking(5);
+        menu.setValidFrom(LocalDateTime.of(2016, 3, 1, 0, 0));
+        menu.setValidTo(LocalDateTime.of(2016, 4, 1, 0, 0));
+        this.menuService.saveMenu(menu);
+
+        LocalDateTime validFrom = LocalDateTime.of(2016, 3, 10, 0, 0);
+        LocalDateTime validTo = LocalDateTime.of(2016, 3, 15, 0, 0);
+
+        MenuFilter menuFilter = new MenuFilter(validFrom, validTo);
+        Assert.assertTrue(this.menuService.getFiltered(menuFilter).contains(menu));
+    }
+
+    @Test
+    public void testFilteredWithValidDatesIsNotContained() {
+        Menu menu;
+        menu = new Menu();
+        menu.setId("not-contained");
+        menu.setName("Cena 1");
+        menu.setDescription("cena numero 1");
+        menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));
+        menu.setPrice(new Price("ARS", new BigDecimal(14)));
+        menu.setRanking(5);
+        menu.setValidFrom(LocalDateTime.of(2016, 2, 1, 0, 0));
+        menu.setValidTo(LocalDateTime.of(2016, 3, 1, 0, 0));
+        this.menuService.saveMenu(menu);
+
+        LocalDateTime validFrom = LocalDateTime.of(2016, 3, 10, 0, 0);
+        LocalDateTime validTo = LocalDateTime.of(2016, 3, 15, 0, 0);
+
+        MenuFilter menuFilter = new MenuFilter(validFrom, validTo);
+        Assert.assertFalse(this.menuService.getFiltered(menuFilter).contains(menu));
     }
 
     @Test

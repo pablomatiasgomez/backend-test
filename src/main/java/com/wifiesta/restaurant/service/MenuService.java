@@ -34,7 +34,7 @@ public class MenuService {
         this.menuRepository.saveMenu(menu);
     }
 
-    // This kind of filters can be moved to the data layer if other motor is used (not a file..)
+    // This kind of filters can be moved to the data layer if other storage engine is used (not a file..)
     public Menu getById(String id) {
         return this.getAll().stream().filter(menu -> id.equals(menu.getId())).findAny().orElse(null);
     }

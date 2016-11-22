@@ -145,6 +145,25 @@ public class MenuServiceTest {
     }
 
     @Test
+    public void testGroupingByPriceIsContained() {
+        Price price = new Price("ARS", new BigDecimal(20));
+
+        Menu menu;
+        menu = new Menu();
+        menu.setId("grouped-by-price-contained");
+        menu.setName("Cena 1");
+        menu.setDescription("cena numero 1");
+        menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));
+        menu.setPrice(price);
+        menu.setRanking(5);
+        menu.setValidFrom(LocalDateTime.of(2016, 3, 1, 0, 0));
+        menu.setValidTo(LocalDateTime.of(2016, 4, 1, 0, 0));
+        this.menuService.saveMenu(menu);
+
+        Assert.assertTrue(this.menuService.getGroupedByPrice().get(price).contains(menu));
+    }
+
+    @Test
     public void testFilteredWith2DaysOfValidity() {
         this.addData();
         LocalDateTime validFrom = LocalDateTime.of(2016, 5, 1, 0, 0);
@@ -187,7 +206,7 @@ public class MenuServiceTest {
     public void testFilteredWithValidDatesIsContained() {
         Menu menu;
         menu = new Menu();
-        menu.setId("contained");
+        menu.setId("filtered-contained");
         menu.setName("Cena 1");
         menu.setDescription("cena numero 1");
         menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));
@@ -208,7 +227,7 @@ public class MenuServiceTest {
     public void testFilteredWithValidDatesIsNotContained() {
         Menu menu;
         menu = new Menu();
-        menu.setId("not-contained");
+        menu.setId("filtered-not-contained");
         menu.setName("Cena 1");
         menu.setDescription("cena numero 1");
         menu.addValidWeekTime(new WeekTimeInterval(DayOfWeek.SUNDAY, LocalTime.of(20, 0, 0), LocalTime.of(23, 0, 0)));

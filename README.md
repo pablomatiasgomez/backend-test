@@ -5,6 +5,7 @@ To run the tests, you should run the entire package `com.wifiesta.restaurant` lo
 In order to start the App, you should run the main class: `com.wifiesta.restaurant.App` with Java 8.
 
 Once started, you could access all the services via `http://localhost:8080/wifiesta/*`
+If you want to have data generated in order to try it out, you could run the tests first, so that mocked stuff is saved.
 
 Some examples:
 
